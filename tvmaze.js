@@ -3,6 +3,8 @@
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
+const $episodesList = $("#episodesList");
+
 
 //TODO: change var name
 const BASE_API_URL = 'http://api.tvmaze.com';
@@ -17,20 +19,17 @@ const DEFAULT_IMAGE = 'https://tinyurl.com/tv-missing';
 
 async function getShowsByTerm(term) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
-   const response = await axios.get(`${API_URL}/search/shows`,
+   const response = await axios.get(`${BASE_API_URL}/search/shows`,
    {params: { q : term }});
 
    console.log("response=", response);
-   console.log("show id=", response.data[0].show.id);
-   console.log("show name=", response.data[0].show.name);
-   console.log("summary=", response.data[0].show.summary);
 
 
-  return response.data.map(show => ({
-    id: show.show.id,
-    name: show.show.name,
-    summary: show.show.summary,
-    image: show.show.image? show.show.image.medium : NO_IMAGE
+  return response.data.map(showAndScore => ({
+    id: showAndScore.show.id,
+    name: showAndScore.show.name,
+    summary: showAndScore.show.summary,
+    image: showAndScore.show.image? showAndScore.show.image.medium : DEFAULT_IMAGE
   }));
 };
 
@@ -126,8 +125,29 @@ async function getEpisodesOfShow(id) {
 
  }
 
-/** Write a clear docstring for this function... */
+/** displayEpisodes: Displays episode information in episodes area of DOM.
+ * Accepts an array of episodes **/
 
-// function displayEpisodes(episodes) { }
+   function displayEpisode(episodes) {
 
-// add other functions that will be useful / match our structure & design
+  for(const episode of episodes){
+    const $episode = $(`<li>${episode.name} (season ${episode.season},
+      number ${episode.number})</li>`);
+    $episodesList.append($episode);
+  }
+console.log($episodesList);
+
+  $episodesArea.append($episodesList);
+  $episodesArea.show();
+}
+
+/** getEpisodesAndDisplay: Gets list of episodes [after click] and calls
+ * displayEpisode on that episode array
+  */
+  async function getEpisodesAndDisplay (){
+    const episodes = await getEpisodesOfShow(id);
+    displayEpisode(episodes);
+  }
+
+  /** click handling function */
+
