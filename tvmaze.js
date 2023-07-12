@@ -4,8 +4,9 @@ const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
 
-const API_URL = 'http://api.tvmaze.com';
-const NO_IMAGE = 'https://tinyurl.com/tv-missing';
+//TODO: change var name
+const BASE_API_URL = 'http://api.tvmaze.com';
+const DEFAULT_IMAGE = 'https://tinyurl.com/tv-missing';
 
 /** Given a search term, search for tv shows that match that query.
  *
@@ -16,20 +17,22 @@ const NO_IMAGE = 'https://tinyurl.com/tv-missing';
 
 async function getShowsByTerm(term) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
-   const response = await axios.get(`${API_URL}/search/shows`,
-   {params: { q : term }});
+  const response = await axios.get(
+    `${BASE_API_URL}/search/shows`,
+    {params: { q : term }}
+  );
 
   console.log("response=", response);
   console.log("show id=", response.data[0].show.id);
   console.log("show name=", response.data[0].show.name);
   console.log("summary=", response.data[0].show.summary);
 
-
-  return response.data.map(show => ({
-    id: show.show.id,
-    name: show.show.name,
-    summary: show.show.summary,
-    image: show.show.image? show.show.image.medium : NO_IMAGE
+// TODO: change show name
+  return response.data.map(showAndScore => ({
+    id: showAndScore.show.id,
+    name: showAndScore.show.name,
+    summary: showAndScore.show.summary,
+    image: showAndScore.show.image ? showAndScore.show.image.medium : DEFAULT_IMAGE
   }));
 };
 
@@ -110,7 +113,20 @@ $searchForm.on("submit", async function handleSearchForm (evt) {
  *      { id, name, season, number }
  */
 
-// async function getEpisodesOfShow(id) { }
+async function getEpisodesOfShow(id) {
+  const response = await axios.get(
+    `${BASE_API_URL}/shows/${id}/episodes`
+  )
+  console.log("response=", response);
+
+  return response.data.map(episodes => ({
+    id: episodes.id,
+    name: episodes.name,
+    season: episodes.season,
+    number: episodes.number,
+  }));
+
+ }
 
 /** Write a clear docstring for this function... */
 
