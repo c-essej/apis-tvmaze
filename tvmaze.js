@@ -19,8 +19,9 @@ const DEFAULT_IMAGE = 'https://tinyurl.com/tv-missing';
 
 async function getShowsByTerm(term) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
-   const response = await axios.get(`${BASE_API_URL}/search/shows`,
-   {params: { q : term }});
+  const response = await axios.get
+   (`${BASE_API_URL}/search/shows`,
+  {params: { q : term }});
 
    console.log("response=", response);
 
@@ -128,7 +129,7 @@ async function getEpisodesOfShow(id) {
 /** displayEpisodes: Displays episode information in episodes area of DOM.
  * Accepts an array of episodes **/
 
-   function displayEpisode(episodes) {
+function displayEpisode(episodes) {
 
   for(const episode of episodes){
     const $episode = $(`<li>${episode.name} (season ${episode.season},
@@ -144,10 +145,19 @@ console.log($episodesList);
 /** getEpisodesAndDisplay: Gets list of episodes [after click] and calls
  * displayEpisode on that episode array
   */
-  async function getEpisodesAndDisplay (){
+  async function getEpisodesAndDisplay (id){
     const episodes = await getEpisodesOfShow(id);
     displayEpisode(episodes);
   }
 
   /** click handling function */
+
+$showsList.on('click', 'button', async function handleButtonClick(evt){
+  const id = $("evt.target")
+            .closest(".Show")
+            .data("showId")
+
+getEpisodesOfShow(id);
+
+});
 
