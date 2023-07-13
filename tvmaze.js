@@ -5,8 +5,6 @@ const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
 const $episodesList = $("#episodesList");
 
-
-//TODO: change var name
 const BASE_API_URL = 'http://api.tvmaze.com';
 const DEFAULT_IMAGE = 'https://tinyurl.com/tv-missing';
 
@@ -23,7 +21,7 @@ async function getShowsByTerm(term) {
     (`${BASE_API_URL}/search/shows`,
       { params: { q: term } });
 
-  console.log("response=", response);
+  //console.log("response=", response);
 
 
   return response.data.map(showAndScore => ({
@@ -126,14 +124,17 @@ async function getEpisodesOfShow(id) {
 
 }
 
-/** displayEpisodes: Displays episode information in episodes area of DOM.
- * Accepts an array of episodes **/
-
+/** displayEpisodes: Clears the episodesList in the DOM, displays formatted
+ * episode list in episodesArea of DOM. Accepts an array of episodes **/
+//TODO:
 function displayEpisode(episodes) {
+  $episodesList.empty();
 
   for (const episode of episodes) {
-    const $episode = $(`<li>${episode.name} (season ${episode.season},
-      number ${episode.number})</li>`);
+    const $episode = $(`
+      <li>${episode.name} (season ${episode.season},
+      number ${episode.number})</li>
+    `);
     $episodesList.append($episode);
   }
   //console.log($episodesList);
@@ -142,7 +143,7 @@ function displayEpisode(episodes) {
   $episodesArea.show();
 }
 
-/** getEpisodesAndDisplay: Gets list of episodes [after click] and calls
+/** getEpisodesAndDisplay: Gets list of episodes and calls
  * displayEpisode on that episode array
   */
 
@@ -151,8 +152,8 @@ async function getEpisodesAndDisplay(id) {
   displayEpisode(episodes);
 }
 
-/** handleEpisodesButtonClick: click handler gets id of target element
- * Calls getEpisodesAndDisplay with target element id
+/** handleEpisodesButtonClick: Click handler gets id of target element,
+ * Calls getEpisodesAndDisplay passing in target element id
   */
 
 $showsList.on('click', 'button', function handleEpisodesButtonClick(evt) {
@@ -161,3 +162,4 @@ $showsList.on('click', 'button', function handleEpisodesButtonClick(evt) {
   getEpisodesAndDisplay(id);
 });
 
+//await/async usually needed above - bring up bug to check-in
